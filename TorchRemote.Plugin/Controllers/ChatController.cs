@@ -17,12 +17,13 @@ using Torch.Utils;
 using TorchRemote.Models.Requests;
 using TorchRemote.Models.Responses;
 using TorchRemote.Models.Shared;
+using TorchRemote.Plugin.Abstractions.Controllers;
 using TorchRemote.Plugin.Modules;
 using TorchRemote.Plugin.Utils;
 using VRage.Network;
 namespace TorchRemote.Plugin.Controllers;
 
-public class ChatController : WebApiController
+public class ChatController : WebApiController, IChatController
 {
     private const string RootPath = "/chat";
 

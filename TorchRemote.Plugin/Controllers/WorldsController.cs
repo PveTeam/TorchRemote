@@ -3,10 +3,11 @@ using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 using TorchRemote.Models.Responses;
+using TorchRemote.Plugin.Abstractions.Controllers;
 using TorchRemote.Plugin.Utils;
 namespace TorchRemote.Plugin.Controllers;
 
-public class WorldsController : WebApiController
+public class WorldsController : WebApiController, IWorldsController
 {
     private const string RootPath = "/worlds";
 

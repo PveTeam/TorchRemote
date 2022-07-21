@@ -7,11 +7,12 @@ using Torch.API.Session;
 using TorchRemote.Models.Requests;
 using TorchRemote.Models.Responses;
 using TorchRemote.Models.Shared;
+using TorchRemote.Plugin.Abstractions.Controllers;
 using TorchRemote.Plugin.Utils;
 
 namespace TorchRemote.Plugin.Controllers;
 
-public class ServerController : WebApiController
+public class ServerController : WebApiController, IServerController
 {
     private const string RootPath = "/server";
     

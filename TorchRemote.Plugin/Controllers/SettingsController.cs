@@ -3,10 +3,11 @@ using EmbedIO.Routing;
 using EmbedIO.WebApi;
 using Swan;
 using TorchRemote.Models.Responses;
+using TorchRemote.Plugin.Abstractions.Controllers;
 using TorchRemote.Plugin.Utils;
 namespace TorchRemote.Plugin.Controllers;
 
-public class SettingsController : WebApiController
+public class SettingsController : WebApiController, ISettingsController
 {
     private const string RootPath = "/settings";
 
