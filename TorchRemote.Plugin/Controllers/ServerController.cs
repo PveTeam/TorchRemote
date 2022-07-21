@@ -34,7 +34,7 @@ public class ServerController : WebApiController
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/stop")]
-    public async Task Stop(StopServerRequest request)
+    public async Task Stop([JsonData] StopServerRequest request)
     {
         if (!Statics.Torch.IsRunning)
             throw HttpException.BadRequest($"Server can't stop in state {Statics.Torch.State}", Statics.Torch.State);
