@@ -6,7 +6,7 @@ namespace TorchRemote.Plugin.Abstractions.Controllers;
 public interface IServerController
 {
     ServerStatusResponse GetStatus();
-    Task Start();
+    void Start();
     Task Stop(StopServerRequest request);
     ServerSettings GetSettings();
     Task SetSettings(ServerSettings request);

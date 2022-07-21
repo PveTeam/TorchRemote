@@ -3,6 +3,6 @@ namespace TorchRemote.Plugin.Abstractions.Controllers;
 
 public interface IChatController
 {
-    Task SendMessage(ChatMessageRequest request);
+    void SendMessage(ChatMessageRequest request);
     Task<Guid> InvokeCommand(ChatCommandRequest request);
 }
