@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchRemote", "TorchRemote\TorchRemote.csproj", "{AFCBEFA1-A827-43C8-B777-A1548FE4BE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchRemote.Models", "TorchRemote.Models\TorchRemote.Models.csproj", "{FC44F0B6-A2A3-4DA7-A900-4BAC69AEA529}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchRemote.Plugin", "TorchRemote.Plugin\TorchRemote.Plugin.csproj", "{054A416F-F106-4E74-98A0-29566F9161C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFCBEFA1-A827-43C8-B777-A1548FE4BE89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFCBEFA1-A827-43C8-B777-A1548FE4BE89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFCBEFA1-A827-43C8-B777-A1548FE4BE89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFCBEFA1-A827-43C8-B777-A1548FE4BE89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC44F0B6-A2A3-4DA7-A900-4BAC69AEA529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC44F0B6-A2A3-4DA7-A900-4BAC69AEA529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC44F0B6-A2A3-4DA7-A900-4BAC69AEA529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC44F0B6-A2A3-4DA7-A900-4BAC69AEA529}.Release|Any CPU.Build.0 = Release|Any CPU
+		{054A416F-F106-4E74-98A0-29566F9161C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{054A416F-F106-4E74-98A0-29566F9161C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{054A416F-F106-4E74-98A0-29566F9161C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{054A416F-F106-4E74-98A0-29566F9161C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

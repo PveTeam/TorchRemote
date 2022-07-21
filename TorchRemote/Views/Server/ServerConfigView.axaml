@@ -1,0 +1,61 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:server="clr-namespace:TorchRemote.ViewModels.Server"
+             xmlns:fuc="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TorchRemote.Views.Server.ServerConfigView">
+    <Design.DataContext>
+        <server:ServerConfigViewModel/>
+    </Design.DataContext>
+    <StackPanel>
+        <Grid ColumnDefinitions="1*,1*">
+            <TextBlock Text="Name"/>
+            <TextBox Grid.Column="1" Text="{Binding Name}" />
+        </Grid>
+        <Grid ColumnDefinitions="1*,1*" Margin="0,10,0,0">
+            <TextBlock Text="Map Name"/>
+            <TextBox Grid.Column="1" Text="{Binding MapName}" />
+        </Grid>
+        <Grid ColumnDefinitions="1*,1*" Margin="0,10,0,0">
+            <TextBlock Text="Description"/>
+            <TextBox Grid.Column="1" AcceptsReturn="True" Text="{Binding Description}" />
+        </Grid>
+        <Grid ColumnDefinitions="1*,1*" Margin="0,10,0,0">
+            <TextBlock Text="Member Limit"/>
+            <NumericUpDown Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding MemberLimit}" />
+        </Grid>
+        <Grid ColumnDefinitions="1*,1*" Margin="0,10,0,0">
+            <TextBlock Text="IP Address"/>
+            <Grid Grid.Column="1" ColumnDefinitions="3*,Auto,1*">
+                <TextBox Text="{Binding Ip}" />
+                <TextBlock Grid.Column="1" Text=":" FontSize="18" FontWeight="Bold" Margin="3,0" />
+                <NumericUpDown Grid.Column="2" Value="{Binding Port}" />
+            </Grid>
+        </Grid>
+        <Grid ColumnDefinitions="1*,1*" Margin="0,10,0,0">
+            <TextBlock Text="Load World"/>
+            <ComboBox Grid.Column="1" Items="{Binding Worlds^}" 
+                      SelectedItem="{Binding SelectedWorld}"
+                      AutoScrollToSelectedItem="True">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock Text="{Binding SizeString}" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
+        <fuc:Button Command="{Binding SaveCommand}" 
+                    Classes="accent"
+                    Width="175">
+            <StackPanel Orientation="Horizontal">
+                <fuc:SymbolIcon Symbol="Save" Margin="5,0"/>
+                <TextBlock Text="Save" Margin="0,0,5,0" />
+            </StackPanel>
+        </fuc:Button>
+    </StackPanel>
+</UserControl>

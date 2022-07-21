@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TorchRemote.ViewModels"
+             xmlns:fuc="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             xmlns:server="clr-namespace:TorchRemote.ViewModels.Server"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TorchRemote.Views.Server.SettingsView">
+    <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
+        <server:SettingsViewModel />
+    </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="fuc|NavigationView /template/ Border#ContentGridBorder">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel>
+        <Grid ColumnDefinitions="1*,2*"
+              RowDefinitions="1*,1*">
+            <TextBlock Text="Url" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding RemoteUrl}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Token" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding BearerToken}" />
+        </Grid>
+    </StackPanel>
+</UserControl>

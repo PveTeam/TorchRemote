@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="TorchRemote/App.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/MainWindow.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/RemoteServerView.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/Server/ChatView.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/Server/DashboardView.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/Server/PlayersView.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/Server/ServerConfigView.axaml" value="TorchRemote/TorchRemote.csproj" />
+        <entry key="TorchRemote/Views/Server/SettingsView.axaml" value="TorchRemote/TorchRemote.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,43 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:fuc="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             xmlns:viewModels="clr-namespace:TorchRemote.ViewModels"
+             xmlns:reactiveUi="http://reactiveui.net"
+             xmlns:server="clr-namespace:TorchRemote.ViewModels.Server"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TorchRemote.Views.RemoteServerView">
+    <Design.DataContext>
+        <viewModels:RemoteServerViewModel />
+    </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="fuc|NavigationView /template/ Border#ContentGridBorder">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+    </UserControl.Styles>
+    <fuc:NavigationView MenuItems="{Binding NavItems}"
+                        SelectedItem="{Binding CurrentNavItem, Mode=TwoWay}"
+                        PaneDisplayMode="LeftCompact"
+                        IsSettingsVisible="False">
+        <fuc:NavigationView.MenuItemTemplate>
+            <DataTemplate DataType="{x:Type server:ServerNavItem}">
+                <fuc:NavigationViewItem Content="{Binding Title}" 
+                                        Icon="{Binding IconElement}" 
+                                        IsVisible="{Binding IsVisible}"/>
+            </DataTemplate>
+        </fuc:NavigationView.MenuItemTemplate>
+        <Panel>
+            <Grid Margin="3" RowDefinitions="Auto,*">
+                <TextBlock Text="{Binding CurrentNavItem.Title}" FontSize="24" FontWeight="Bold" />
+                <reactiveUi:RoutedViewHost Grid.Row="1" Margin="0,10" Router="{Binding Router}" />
+            </Grid>
+            <TextBlock Text="Loading..." 
+                       IsVisible="{Binding !Connected}"
+                       IsHitTestVisible="False"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Panel>
+    </fuc:NavigationView>
+</UserControl>

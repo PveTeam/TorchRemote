@@ -1,0 +1,99 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>x64</PlatformTarget>
+        <LangVersion>10</LangVersion>
+        <UseWpf>true</UseWpf>
+        <TorchDir>$(SolutionDir)TorchBinaries\</TorchDir>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>none</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="NLog">
+            <HintPath>$(TorchDir)NLog.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Common.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Game, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Graphics, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Graphics.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Memory">
+            <HintPath>$(TorchDir)DedicatedServer64\System.Memory.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Net.Http" />
+        <Reference Include="Torch">
+            <HintPath>$(TorchDir)Torch.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Torch.API">
+            <HintPath>$(TorchDir)Torch.API.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Torch.Server">
+            <HintPath>$(TorchDir)Torch.Server.exe</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Game, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Input, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Input.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Library, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Library.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Math.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Network, Version=1.0.53.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Network.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EmbedIO" Version="3.4.3" />
+        <PackageReference Include="EmbedIO.BearerToken" Version="3.4.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" ExcludeAssets="all" PrivateAssets="all" />
+        <PackageReference Include="PropertyChanged.Fody" Version="4.0.0" PrivateAssets="all" />
+        <PackageReference Include="System.Text.Json" Version="7.0.0-preview.6.22324.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="manifest.xml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TorchRemote.Models\TorchRemote.Models.csproj" />
+    </ItemGroup>
+    
+    <Target Name="CopyToTorch" AfterTargets="Build">
+        <ZipDirectory DestinationFile="$(TorchDir)Plugins\$(AssemblyName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+    </Target>
+
+</Project>
