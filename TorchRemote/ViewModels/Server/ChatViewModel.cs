@@ -34,9 +34,9 @@ public class ChatViewModel : ViewModelBase
                     .Subscribe(s => ChatLines += $"{s}{Environment.NewLine}");
             });
         
-        SendMessageCommand = ReactiveCommand.CreateFromTask<string>((s, t) => s.StartsWith("!") ?
-            clientService.InvokeCommandAsync(new(s[(s.IndexOf('!') + 1)..]), t) :
-            clientService.SendChatMessageAsync(new("Server", s, ChatChannel.GlobalScripted), t));
+        SendMessageCommand = ReactiveCommand.CreateFromTask<string>(s => s.StartsWith("!") ?
+            clientService.Api.InvokeChatCommand(new(s[(s.IndexOf('!') + 1)..])) :
+            clientService.Api.SendChatMessage(new("Server", s, ChatChannel.GlobalScripted)));
 
         InvalidCommandPopup = SendMessageCommand.ThrownExceptions
             .Where(b => b is HttpRequestException {StatusCode: HttpStatusCode.NotFound or HttpStatusCode.BadRequest})

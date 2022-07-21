@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Net.WebSockets;
-using System.Threading;
 using System.Threading.Tasks;
-using TorchRemote.Models.Requests;
-using TorchRemote.Models.Responses;
-using TorchRemote.Models.Shared;
+using Refit;
 using Websocket.Client;
 namespace TorchRemote.Services;
 
@@ -31,8 +26,10 @@ public class ApiClientService
 
     public ApiClientService()
     {
+        Api = RestService.For<IRemoteApi>(_client);
         Task.Run(ConnectionTimer);
     }
+    public IRemoteApi Api { get; }
 
     private async Task ConnectionTimer()
     {
@@ -41,7 +38,7 @@ public class ApiClientService
             await Task.Delay(1000);
             try
             {
-                await GetServerStatusAsync(CancellationToken.None);
+                await Api.GetServerStatus();
                 break;
             }
             catch
@@ -50,43 +47,6 @@ public class ApiClientService
         }
         
         Connected?.Invoke(this, EventArgs.Empty);
-    }
-
-    public Task<ServerStatusResponse> GetServerStatusAsync(CancellationToken token) =>
-        _client.GetFromJsonAsync<ServerStatusResponse>("server/status", token)!;
-    
-    public Task<ServerSettings> GetServerSettingsAsync(CancellationToken token) =>
-        _client.GetFromJsonAsync<ServerSettings>("server/settings", token)!;
-    
-    public Task SetServerSettingsAsync(ServerSettings settings, CancellationToken token) => 
-        _client.PostAsJsonAsync("server/settings", settings, token);
-    
-    public Task StartServerAsync(CancellationToken token) => 
-        _client.PostAsync("server/start", null, token);
-    
-    public Task StopServerAsync(StopServerRequest request, CancellationToken token) =>
-        _client.PostAsJsonAsync("server/stop", request, token);
-    
-    public Task<IEnumerable<Guid>> GetWorldsAsync(CancellationToken token) =>
-        _client.GetFromJsonAsync<IEnumerable<Guid>>("worlds", token)!;
-
-    public Task<WorldResponse> GetWorldAsync(Guid id, CancellationToken token) =>
-        _client.GetFromJsonAsync<WorldResponse>($"worlds/{id}", token)!;
-
-    public Task<Guid> GetSelectedWorld(CancellationToken token) =>
-        _client.GetFromJsonAsync<Guid>("worlds/selected", token);
-    
-    public Task SelectWorldAsync(Guid id, CancellationToken token) =>
-        _client.PostAsync($"worlds/{id}/select", null, token);
-    
-    public Task SendChatMessageAsync(ChatMessageRequest request, CancellationToken token) =>
-        _client.PostAsJsonAsync("chat/message", request, token);
-
-    public async Task<Guid> InvokeCommandAsync(ChatCommandRequest request, CancellationToken token)
-    {
-        var r = await _client.PostAsJsonAsync("chat/command", request, token);
-        r.EnsureSuccessStatusCode();
-        return await r.Content.ReadFromJsonAsync<Guid>(cancellationToken: token);
     }
 
     public Task<WebsocketClient> WatchChatAsync() => StartWebsocketConnectionAsync("live/chat");

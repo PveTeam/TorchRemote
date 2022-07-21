@@ -22,7 +22,7 @@ public class DashboardViewModel : ViewModelBase
             .Subscribe(_ =>
             {
                 Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(10))
-                    .Select(_ => Observable.FromAsync(t => _clientService.GetServerStatusAsync(t)))
+                    .Select(_ => Observable.FromAsync(() => _clientService.Api.GetServerStatus()))
                     .Concat()
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(r =>
@@ -49,11 +49,11 @@ public class DashboardViewModel : ViewModelBase
                     });
             });
 
-        StartCommand = ReactiveCommand.CreateFromTask(t => _clientService.StartServerAsync(t), 
+        StartCommand = ReactiveCommand.CreateFromTask(() => _clientService.Api.StartServer(), 
             this.WhenAnyValue(x => x.Status)
                 .Select(b => b is ServerStatus.Stopped));
         
-        StopCommand = ReactiveCommand.CreateFromTask<bool>((b, t) => _clientService.StopServerAsync(new(b), t), 
+        StopCommand = ReactiveCommand.CreateFromTask<bool>(b => _clientService.Api.StopServer(new(b)), 
             this.WhenAnyValue(x => x.Status)
                 .Select(b => b is ServerStatus.Running));
     }
