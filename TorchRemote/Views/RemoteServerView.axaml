@@ -31,7 +31,9 @@
         <Panel>
             <Grid Margin="3" RowDefinitions="Auto,*">
                 <TextBlock Text="{Binding CurrentNavItem.Title}" FontSize="24" FontWeight="Bold" />
-                <reactiveUi:RoutedViewHost Grid.Row="1" Margin="0,10" Router="{Binding Router}" />
+                <ScrollViewer Grid.Row="1" Margin="0,10" HorizontalScrollBarVisibility="Auto">
+                    <reactiveUi:RoutedViewHost Router="{Binding Router}" />
+                </ScrollViewer>
             </Grid>
             <TextBlock Text="Loading..." 
                        IsVisible="{Binding !Connected}"
