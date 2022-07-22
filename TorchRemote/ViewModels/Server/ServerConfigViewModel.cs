@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Refit;
 using TorchRemote.Services;
 namespace TorchRemote.ViewModels.Server;
 
@@ -14,6 +15,7 @@ public class ServerConfigViewModel : ViewModelBase
             .ObserveOn(RxApp.MainThreadScheduler)
             .Select(_ => Observable.FromAsync(clientService.Api.GetServerSettings))
             .Concat()
+            .Select(b => b.Content!)
             .Subscribe(b =>
             {
                 Name = b.ServerName;
@@ -37,15 +39,21 @@ public class ServerConfigViewModel : ViewModelBase
             .ObserveOn(RxApp.MainThreadScheduler)
             .Select(_ => Observable.FromAsync(clientService.Api.GetWorlds))
             .Concat()
+            .Select(b => b.Content!)
             .SelectMany(ids => ids)
-            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id)).Select(b => new World(id, b.Name, b.SizeKb)))
+            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
+                .Select(b => b.Content!)
+                .Select(b => new World(id, b.Name, b.SizeKb)))
             .Concat();
 
         Observable.FromEventPattern(clientService, nameof(clientService.Connected))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Select(_ => Observable.FromAsync(clientService.Api.GetSelectedWorld))
             .Concat()
-            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id)).Select(b => new World(id, b.Name, b.SizeKb)))
+            .Select(b => b.Content!)
+            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
+                .Select(b => b.Content!)
+                .Select(b => new World(id, b.Name, b.SizeKb)))
             .Concat()
             .BindTo(this, x => x.SelectedWorld);
 
@@ -54,7 +62,7 @@ public class ServerConfigViewModel : ViewModelBase
             .Concat()
             .Subscribe(_ => { });
     }
-    public ReactiveCommand<Unit,Unit> SaveCommand { get; set; }
+    public ReactiveCommand<Unit, IApiResponse> SaveCommand { get; set; }
 
     [Reactive]
     public string Name { get; set; } = null!;

@@ -11,37 +11,37 @@ public interface IRemoteApi
 {
 #region Server
     [Get("/server/status")]
-    Task<ServerStatusResponse> GetServerStatus();
+    Task<IApiResponse<ServerStatusResponse>> GetServerStatus();
     [Post("/server/start")]
-    Task StartServer();
+    Task<IApiResponse> StartServer();
     [Post("/server/stop")]
-    Task StopServer([Body] StopServerRequest request);
+    Task<IApiResponse> StopServer([Body] StopServerRequest request);
     [Get("/server/settings")]
-    Task<ServerSettings> GetServerSettings();
+    Task<IApiResponse<ServerSettings>> GetServerSettings();
     [Post("/server/settings")]
-    Task SetServerSettings([Body] ServerSettings request);
+    Task<IApiResponse> SetServerSettings([Body] ServerSettings request);
 #endregion
 
 #region Chat
     [Post("/chat/message")]
-    Task SendChatMessage([Body] ChatMessageRequest request);
+    Task<IApiResponse> SendChatMessage([Body] ChatMessageRequest request);
     [Post("/chat/command")]
-    Task<Guid> InvokeChatCommand([Body] ChatCommandRequest request);
+    Task<IApiResponse<Guid>> InvokeChatCommand([Body] ChatCommandRequest request);
 #endregion
 
 #region Worlds
     [Get("/worlds")]
-    Task<IEnumerable<Guid>> GetWorlds();
+    Task<IApiResponse<IEnumerable<Guid>>> GetWorlds();
     [Get("/worlds/selected")]
-    Task<Guid> GetSelectedWorld();
+    Task<IApiResponse<Guid>> GetSelectedWorld();
     [Get("/worlds/{id}")]
-    Task<WorldResponse> GetWorld(Guid id);
+    Task<IApiResponse<WorldResponse>> GetWorld(Guid id);
     [Post("/worlds/{id}/select")]
-    Task SelectWorld(Guid id);
+    Task<IApiResponse<IApiResponse>> SelectWorld(Guid id);
 #endregion
 
 #region Settings
     [Get("/settings/{id}")]
-    Task<SettingInfoResponse> GetSetting(Guid id);
+    Task<IApiResponse<SettingInfoResponse>> GetSetting(Guid id);
 #endregion
 }

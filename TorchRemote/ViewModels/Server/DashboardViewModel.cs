@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Text.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Refit;
 using TorchRemote.Models.Responses;
 using TorchRemote.Services;
 namespace TorchRemote.ViewModels.Server;
@@ -27,7 +28,7 @@ public class DashboardViewModel : ViewModelBase
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(r =>
                     {
-                        var (simSpeed, online, uptime, status) = r;
+                        var (simSpeed, online, uptime, status) = r.Content!;
                         SimSpeed = simSpeed;
                         Status = status;
                         Uptime = uptime;
@@ -53,12 +54,12 @@ public class DashboardViewModel : ViewModelBase
             this.WhenAnyValue(x => x.Status)
                 .Select(b => b is ServerStatus.Stopped));
         
-        StopCommand = ReactiveCommand.CreateFromTask<bool>(b => _clientService.Api.StopServer(new(b)), 
+        StopCommand = ReactiveCommand.CreateFromTask<bool, IApiResponse>(b => _clientService.Api.StopServer(new(b)), 
             this.WhenAnyValue(x => x.Status)
                 .Select(b => b is ServerStatus.Running));
     }
-    public ReactiveCommand<bool,Unit> StopCommand { get; set; }
-    public ReactiveCommand<Unit,Unit> StartCommand { get; set; }
+    public ReactiveCommand<bool, IApiResponse> StopCommand { get; set; }
+    public ReactiveCommand<Unit, IApiResponse> StartCommand { get; set; }
 
     [Reactive]
     public double SimSpeed { get; set; }
