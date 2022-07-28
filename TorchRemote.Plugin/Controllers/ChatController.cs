@@ -92,7 +92,7 @@ public class ChatController : WebApiController, IChatController
 
         var argsList = Regex.Matches(argText, "(\"[^\"]+\"|\\S+)").Cast<Match>().Select(x => x.ToString().Replace("\"", "")).ToList();
 
-        var id = new Guid();
+        var id = Guid.NewGuid();
         var context = new WebSocketCommandContext(Statics.Torch, command.Plugin, argText, argsList, Statics.ChatModule, id);
         
         if (await Statics.Torch.InvokeAsync(() => command.TryInvoke(context)))
