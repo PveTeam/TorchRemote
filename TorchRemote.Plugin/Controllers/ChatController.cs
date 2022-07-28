@@ -77,8 +77,9 @@ public class ChatController : WebApiController, IChatController
                 throw HttpException.BadRequest("Invalid channel and targetId combination");
         }
         
-        if (Statics.Torch.CurrentSession?.Managers.GetManager<IChatManagerServer>() is { } manager)
-            manager.DisplayMessageOnSelf(request.Author, request.Message);
+        if (Statics.Torch.CurrentSession?.Managers.GetManager<IChatManagerServer>() is { } manager && 
+            request.Channel is ChatChannel.Global or ChatChannel.GlobalScripted)
+            manager.DisplayMessageOnSelf(msg.CustomAuthorName, msg.Text);
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/command")]
