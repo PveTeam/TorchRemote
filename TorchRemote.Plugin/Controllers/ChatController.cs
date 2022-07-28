@@ -40,7 +40,7 @@ public class ChatController : WebApiController, IChatController
 
         var msg = new ChatMsg
         {
-            CustomAuthorName = request.Author,
+            CustomAuthorName = request.Author ?? Statics.Torch.Config.ChatName,
             Text = request.Message,
             Channel = (byte)request.Channel,
             TargetId = request.TargetId.GetValueOrDefault()
