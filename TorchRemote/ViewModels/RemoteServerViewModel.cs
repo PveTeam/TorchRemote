@@ -39,9 +39,10 @@ public class RemoteServerViewModel : TabViewModelBase, IScreen
             .Select<ServerNavItem, IRoutableViewModel>(b => b.ViewModel)
             .InvokeCommand(Router, x => x.Navigate);
 
-        Observable.FromEventPattern(_clientService, nameof(_clientService.Connected))
+        _clientService.Connected
+            .DistinctUntilChanged()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ => Connected = true);
+            .ToPropertyEx(this, x => x.Connected);
 
         this.WhenAnyValue(x => x.Connected)
             .Where(b => b)
@@ -57,6 +58,5 @@ public class RemoteServerViewModel : TabViewModelBase, IScreen
     public RoutingState Router { get; set; } = new();
 
     [JsonIgnore]
-    [Reactive]
-    public bool Connected { get; set; }
+    public extern bool Connected { [ObservableAsProperty] get; }
 }
