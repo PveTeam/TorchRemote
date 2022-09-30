@@ -77,9 +77,13 @@
     <ItemGroup>
         <PackageReference Include="EmbedIO" Version="3.4.3" />
         <PackageReference Include="EmbedIO.BearerToken" Version="3.4.2" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" ExcludeAssets="all" PrivateAssets="all" />
+        <PackageReference Include="Json.More.Net" Version="1.7.1" />
+        <PackageReference Include="JsonPointer.Net" Version="2.2.2" />
+        <PackageReference Include="JsonSchema.Net" Version="3.2.2" />
+        <PackageReference Include="JsonSchema.Net.Generation" Version="3.0.4" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.0.0" PrivateAssets="all" />
-        <PackageReference Include="System.Text.Json" Version="7.0.0-preview.6.22324.4" />
+        <PackageReference Include="System.Text.Json" Version="7.0.0-rc.1.22426.10" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" ExcludeAssets="all" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>

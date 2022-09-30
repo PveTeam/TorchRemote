@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Text.Json" Version="7.0.0-preview.6.22324.4" />
+      <PackageReference Include="Json.More.Net" Version="1.7.1" />
+      <PackageReference Include="JsonSchema.Net" Version="3.2.1" />
+      <PackageReference Include="System.Text.Json" Version="7.0.0-rc.1.22426.10" />
     </ItemGroup>
 </Project>

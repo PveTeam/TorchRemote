@@ -3,5 +3,5 @@ namespace TorchRemote.Plugin.Abstractions.Controllers;
 
 public interface ISettingsController
 {
-    SettingInfoResponse Get(Guid id);
+    SettingInfoResponse Get(string fullName);
 }
