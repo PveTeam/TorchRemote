@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <PluginManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <Name>TorchRemote.Plugin</Name>
+    <Name>Torch Remote</Name>
     <Guid>284017F3-9682-4841-A544-EB04DB8CB9BA</Guid>
     <Version>v1.0.2</Version>
 </PluginManifest>
