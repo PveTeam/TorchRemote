@@ -29,7 +29,8 @@
     - [ ] promote
     - [ ] demote
 - [x] logs (websocket)
-- [x] chat
+- [ ] chat
     - [x] live messages (websocket)
     - [x] invoke command
+    - [ ] invoke command (with direct response for optional delay)
     - [x] send message (custom color author channel)
