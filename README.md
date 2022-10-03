@@ -2,7 +2,7 @@
 
 # Api Roadmap
 
-- [ ] world
+- [x] world
     - [x] list available (guids)
     - [x] get basic info (name, size)
     - [x] selected get
@@ -14,11 +14,11 @@
     - [x] settings get
     - [x] settings set
     - [x] status (state sim uptime)
-- [ ] settings
-    - [ ] get type schema (maybe in graphql or json schema)
-    - [ ] list properties of type instance
-    - [ ] get property value
-    - [ ] set property value
+- [x] settings
+    - [x] get type schema (maybe in graphql or json schema)
+    - [x] list properties of type instance
+    - [x] get property value
+    - [x] set property value
 - [ ] plugins
     - [ ] list (with ids for config type instance)
 - [ ] players
