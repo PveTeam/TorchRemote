@@ -1,0 +1,1 @@
+﻿global using JsonData = TorchRemote.Plugin.Utils.JsonDataAttribute;
