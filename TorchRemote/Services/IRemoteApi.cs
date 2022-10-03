@@ -5,6 +5,8 @@ using Refit;
 using TorchRemote.Models.Requests;
 using TorchRemote.Models.Responses;
 using TorchRemote.Models.Shared;
+using TorchRemote.Models.Shared.Settings;
+
 namespace TorchRemote.Services;
 
 public interface IRemoteApi
@@ -41,7 +43,12 @@ public interface IRemoteApi
 #endregion
 
 #region Settings
-    [Get("/settings/{id}")]
-    Task<IApiResponse<SettingInfoResponse>> GetSetting(Guid id);
+    [Get("/settings/{fullName}")]
+    Task<IApiResponse<SettingInfoResponse>> GetSetting(string fullName);
+    [Get("/settings/{fullName}/values")]
+    Task<IApiResponse<IEnumerable<PropertyBase>>> GetSettingValues(string fullName, [Body] IEnumerable<string> propertyNames);
+    [Patch("/settings/{fullName}/values")]
+    Task<IApiResponse<int>> PatchSettingValues(string fullName, [Body] IEnumerable<PropertyBase> properties);
+
 #endregion
 }

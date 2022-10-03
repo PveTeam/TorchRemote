@@ -8,7 +8,7 @@ public class SettingsViewModel : ViewModelBase
 {
     private readonly ApiClientService _clientService;
     [Reactive]
-    public string BearerToken { get; set; } = "WcdYT5qHjSt5Uzjs54xu8vE9Oq4a5MD2edLxywtJHtc=";
+    public string BearerToken { get; set; } = "NSN9qSbvKO6PtvoUg+fV5CrSpLqz+F2ssXvzbFbgOpE=";
     [Reactive]
     public string RemoteUrl { get; set; } = "http://localhost";
 

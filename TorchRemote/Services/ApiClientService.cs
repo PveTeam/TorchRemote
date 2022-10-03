@@ -4,11 +4,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Refit;
+using TorchRemote.Models.Responses;
 using Websocket.Client;
+using Websocket.Client.Models;
+
 namespace TorchRemote.Services;
 
 public class ApiClientService : IDisposable
@@ -23,7 +28,7 @@ public class ApiClientService : IDisposable
     private readonly CancellationTokenSource _tokenSource = new();
     public string BaseUrl
     {
-        get => _client.BaseAddress?.ToString() ?? "http://localhost";
+        get => _client.BaseAddress?.ToString() ?? $"http://localhost/api/{Version}/";
         set => _client.BaseAddress = new($"{value}/api/{Version}/");
     }
 
@@ -48,21 +53,23 @@ public class ApiClientService : IDisposable
         }
     }
 
-    public Task<WebsocketClient> WatchChatAsync() => StartWebsocketConnectionAsync("live/chat");
+    public async Task<WebsocketFeed<ChatResponseBase>> WatchChatAsync() => 
+        new(await StartWebsocketConnectionAsync("live/chat"));
 
-    public Task<WebsocketClient> WatchLogLinesAsync() => StartWebsocketConnectionAsync("live/logs");
+    public async Task<WebsocketFeed<LogLineResponse>> WatchLogLinesAsync() => 
+        new(await StartWebsocketConnectionAsync("live/logs"));
 
     private async Task<WebsocketClient> StartWebsocketConnectionAsync(string url)
     {
         var client = new WebsocketClient(new($"{BaseUrl}{url}"
-                .Replace($"/{Version}", string.Empty)
-                .Replace("http", "ws")), 
-            () =>
-            {
-                var socket = new ClientWebSocket();
-                socket.Options.SetRequestHeader("Authorization", $"Bearer {BearerToken}");
-                return socket;
-            })
+                                             .Replace($"/{Version}", string.Empty)
+                                             .Replace("http", "ws")), 
+                                         () =>
+                                         {
+                                             var socket = new ClientWebSocket();
+                                             socket.Options.SetRequestHeader("Authorization", $"Bearer {BearerToken}");
+                                             return socket;
+                                         })
         {
             ReconnectTimeout = null,
             ErrorReconnectTimeout = TimeSpan.FromSeconds(10)
@@ -76,5 +83,33 @@ public class ApiClientService : IDisposable
         _client.Dispose();
         _tokenSource.Cancel();
         _tokenSource.Dispose();
+    }
+
+    public static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
+}
+
+public sealed class WebsocketFeed<TMessage> : IDisposable where TMessage : class
+{
+    private readonly WebsocketClient _client;
+
+    public WebsocketFeed(WebsocketClient client)
+    {
+        _client = client;
+        Disconnected = client.DisconnectionHappened;
+        Connected = client.ReconnectionHappened;
+        Messages = client.MessageReceived.Where(b => b.MessageType is WebSocketMessageType.Text)
+                         .Select(b => JsonSerializer.Deserialize<TMessage>(b.Text, ApiClientService.SerializerOptions))
+                         .Where(b => b is not null)!;
+    }
+
+    public IObservable<DisconnectionInfo> Disconnected { get; }
+
+    public IObservable<ReconnectionInfo> Connected { get; }
+
+    public IObservable<TMessage> Messages { get; }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

@@ -1,10 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 using System.Text.Json;
 using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 using Humanizer;
-using Torch.Views;
 using TorchRemote.Models.Responses;
 using TorchRemote.Models.Shared.Settings;
 using TorchRemote.Plugin.Abstractions.Controllers;
@@ -17,27 +17,19 @@ public class SettingsController : WebApiController, ISettingsController
 {
     private const string RootPath = "/settings";
 
+    [Route(HttpVerbs.Get, RootPath)]
+    public IEnumerable<string> GetAllSettings()
+    {
+        return Statics.SettingManager.Settings.Keys;
+    }
+
     [Route(HttpVerbs.Get, $"{RootPath}/{{fullName}}")]
     public SettingInfoResponse Get(string fullName)
     {
         if (!Statics.SettingManager.Settings.TryGetValue(fullName, out var setting))
             throw HttpException.NotFound($"Setting with fullName {fullName} not found", fullName);
 
-        return new(StringExtensions.Humanize(setting.Name), setting.Schema, setting
-                                                                            .Type.GetProperties(
-                                                                                BindingFlags.Public | BindingFlags.Instance)
-                                                                            .Where(b => setting.IncludeDisplayOnly &&
-                                                                                b.HasAttribute<DisplayAttribute>())
-                                                                            .Select(b =>
-                                                                            {
-                                                                                var attr = b.GetCustomAttribute<DisplayAttribute>();
-                                                                                return new SettingPropertyInfo(
-                                                                                    attr?.Name ?? StringExtensions.Humanize(b.Name),
-                                                                                    Statics.SerializerOptions
-                                                                                        .PropertyNamingPolicy!.ConvertName(b.Name),
-                                                                                    attr?.Description,
-                                                                                    attr?.Order is 0 or null ? null : attr.Order);
-                                                                            }).ToArray());
+        return new(StringExtensions.Humanize(setting.Name), setting.Schema);
     }
 
     [Route(HttpVerbs.Get, $"{RootPath}/{{fullName}}/values")]
@@ -59,9 +51,12 @@ public class SettingsController : WebApiController, ISettingsController
 
             return type switch
             {
-                _ when type == typeof(int) || type == typeof(int?) => (PropertyBase)new IntegerProperty(name, (int?)value),
+                _ when type == typeof(int) || type == typeof(int?) => (PropertyBase)new IntegerProperty(
+                    name, (int?)value),
+                _ when type == typeof(bool) || type == typeof(bool?) => new BooleanProperty(name, (bool?)value),
                 _ when type == typeof(string) => new StringProperty(name, (string?)value),
-                _ when type.IsPrimitive => new NumberProperty(name, value is null ? null : (double?)Convert.ChangeType(value, typeof(double))),
+                _ when type.IsPrimitive => new NumberProperty(
+                    name, value is null ? null : (double?)Convert.ChangeType(value, typeof(double))),
                 _ when type == typeof(DateTime) || type == typeof(DateTime?) => new DateTimeProperty(
                     name, (DateTime?)value),
                 _ when type == typeof(TimeSpan) || type == typeof(TimeSpan?) => new DurationProperty(
@@ -71,6 +66,8 @@ public class SettingsController : WebApiController, ISettingsController
                 _ when type == typeof(Guid) || type == typeof(Guid?) => new UuidProperty(
                     name, (Guid?)value),
                 _ when type == typeof(Uri) => new UriProperty(name, (Uri?)value),
+                _ when typeof(ICollection).IsAssignableFrom(type) =>
+                    new ArrayProperty(name, JsonSerializer.SerializeToElement(value, type, Statics.SerializerOptions)),
                 _ when type.IsClass => new ObjectProperty(
                     name, JsonSerializer.SerializeToElement(value, type, Statics.SerializerOptions)),
                 _ => throw HttpException.NotFound("Property type not found", name),
@@ -146,6 +143,9 @@ public class SettingsController : WebApiController, ISettingsController
                     break;
                 case ObjectProperty objectProperty when type.IsClass:
                     propInfo.SetValue(instance, objectProperty.Value.Deserialize(type, Statics.SerializerOptions));
+                    break;
+                case ArrayProperty arrayProperty when typeof(ICollection).IsAssignableFrom(type):
+                    propInfo.SetValue(instance, arrayProperty.Value.Deserialize(type, Statics.SerializerOptions));
                     break;
                 case StringProperty stringProperty when type == typeof(string):
                     propInfo.SetValue(instance, stringProperty.Value);

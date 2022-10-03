@@ -18,37 +18,35 @@ public class DashboardViewModel : ViewModelBase
     {
         _clientService = clientService;
 
-        Observable.FromEventPattern(_clientService, nameof(_clientService.Connected))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(10))
-                    .Select(_ => Observable.FromAsync(() => _clientService.Api.GetServerStatus()))
-                    .Concat()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(r =>
-                    {
-                        var (simSpeed, online, uptime, status) = r.Content!;
-                        SimSpeed = simSpeed;
-                        Status = status;
-                        Uptime = uptime;
-                        MemberCount = online;
-                    });
+        _clientService.Connected
+                      .ObserveOn(RxApp.MainThreadScheduler)
+                      .Subscribe(_ =>
+                      {
+                          Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(10))
+                                    .Select(_ => Observable.FromAsync(() => _clientService.Api.GetServerStatus()))
+                                    .Concat()
+                                    .ObserveOn(RxApp.MainThreadScheduler)
+                                    .Subscribe(r =>
+                                    {
+                                        var (simSpeed, online, uptime, status) = r.Content!;
+                                        SimSpeed = simSpeed;
+                                        Status = status;
+                                        Uptime = uptime;
+                                        MemberCount = online;
+                                    });
 
-                var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-                Observable.FromAsync(() => _clientService.WatchLogLinesAsync())
-                    .Select(b => b.MessageReceived)
-                    .Concat()
-                    .Select(b => JsonSerializer.Deserialize<LogLineResponse>(b.Text, options))
-                    .Select(b => $"{b.Time:hh:mm:ss} [{b.Level}] {(b.Logger.Contains('.') ? b.Logger[(b.Logger.LastIndexOf('.') + 1)..] : b.Logger)}: {b.Message}")
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(s =>
-                    {
-                        if (LogLines.Count(b => b == '\n') > 1000)
-                            LogLines = LogLines['\n'..];
-                        LogLines += $"{s}\n";
-                    });
-            });
+                          Observable.FromAsync(() => _clientService.WatchLogLinesAsync())
+                                    .Select(b => b.Messages)
+                                    .Concat()
+                                    .Select(b => $"{b.Time:hh:mm:ss} [{b.Level}] {(b.Logger.Contains('.') ? b.Logger[(b.Logger.LastIndexOf('.') + 1)..] : b.Logger)}: {b.Message}")
+                                    .ObserveOn(RxApp.MainThreadScheduler)
+                                    .Subscribe(s =>
+                                    {
+                                        if (LogLines.Count(b => b == '\n') > 1000)
+                                            LogLines = LogLines['\n'..];
+                                        LogLines += $"{s}\n";
+                                    });
+                      });
 
         StartCommand = ReactiveCommand.CreateFromTask(() => _clientService.Api.StartServer(), 
             this.WhenAnyValue(x => x.Status)

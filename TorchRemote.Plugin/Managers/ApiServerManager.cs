@@ -51,17 +51,17 @@ public class ApiServerManager : Manager
         Statics.ChatModule = chatModule;
 
         _server = new WebServer(o => o
-                .WithUrlPrefix(_config.Listener.UrlPrefix)
-                .WithMicrosoftHttpListener())
-            .WithLocalSessionManager()
-            .WithModule(apiModule
-                .WithController<ServerController>()
-                .WithController<SettingsController>()
-                .WithController<WorldsController>()
-                .WithController<ChatController>())
-            .WithModule(new LogsModule("/api/live/logs", true))
-            .WithModule(chatModule)
-            .WithBearerToken("/api", new SymmetricSecurityKey(Convert.FromBase64String(_config.SecurityKey)), new BasicAuthorizationServerProvider());
+                                     .WithUrlPrefix(_config.Listener.UrlPrefix)
+                                     .WithMicrosoftHttpListener())
+                  .WithLocalSessionManager()
+                  .WithModule(apiModule
+                              .WithController<ServerController>()
+                              .WithController<SettingsController>()
+                              .WithController<WorldsController>()
+                              .WithController<ChatController>())
+                  .WithModule(new LogsModule("/api/live/logs", true))
+                  .WithModule(chatModule)
+                  .WithBearerToken("/api", new SymmetricSecurityKey(Convert.FromBase64String(_config.SecurityKey)), new BasicAuthorizationServerProvider());
     }
 
     public override void Attach()

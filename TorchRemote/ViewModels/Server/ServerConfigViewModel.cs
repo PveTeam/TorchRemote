@@ -11,20 +11,20 @@ public class ServerConfigViewModel : ViewModelBase
 {
     public ServerConfigViewModel(ApiClientService clientService)
     {
-        Observable.FromEventPattern(clientService, nameof(clientService.Connected))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Select(_ => Observable.FromAsync(clientService.Api.GetServerSettings))
-            .Concat()
-            .Select(b => b.Content!)
-            .Subscribe(b =>
-            {
-                Name = b.ServerName;
-                MapName = b.MapName;
-                MemberLimit = b.MemberLimit;
-                Description = b.ServerDescription;
-                Ip = b.ListenEndPoint.Ip;
-                Port = b.ListenEndPoint.Port;
-            });
+        clientService.Connected
+                     .ObserveOn(RxApp.MainThreadScheduler)
+                     .Select(_ => Observable.FromAsync(clientService.Api.GetServerSettings))
+                     .Concat()
+                     .Select(b => b.Content!)
+                     .Subscribe(b =>
+                     {
+                         Name = b.ServerName;
+                         MapName = b.MapName;
+                         MemberLimit = b.MemberLimit;
+                         Description = b.ServerDescription;
+                         Ip = b.ListenEndPoint.Ip;
+                         Port = b.ListenEndPoint.Port;
+                     });
 
         SaveCommand = ReactiveCommand.CreateFromTask(() => 
             clientService.Api.SetServerSettings(new(
@@ -35,27 +35,27 @@ public class ServerConfigViewModel : ViewModelBase
                 new(Ip, Port)
                 )));
 
-        Worlds = Observable.FromEventPattern(clientService, nameof(clientService.Connected))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Select(_ => Observable.FromAsync(clientService.Api.GetWorlds))
-            .Concat()
-            .Select(b => b.Content!)
-            .SelectMany(ids => ids)
-            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
-                .Select(b => b.Content!)
-                .Select(b => new World(id, b.Name, b.SizeKb)))
-            .Concat();
+        Worlds = clientService.Connected
+                              .ObserveOn(RxApp.MainThreadScheduler)
+                              .Select(_ => Observable.FromAsync(clientService.Api.GetWorlds))
+                              .Concat()
+                              .Select(b => b.Content!)
+                              .SelectMany(ids => ids)
+                              .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
+                                                      .Select(b => b.Content!)
+                                                      .Select(b => new World(id, b.Name, b.SizeKb)))
+                              .Concat();
 
-        Observable.FromEventPattern(clientService, nameof(clientService.Connected))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Select(_ => Observable.FromAsync(clientService.Api.GetSelectedWorld))
-            .Concat()
-            .Select(b => b.Content!)
-            .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
-                .Select(b => b.Content!)
-                .Select(b => new World(id, b.Name, b.SizeKb)))
-            .Concat()
-            .BindTo(this, x => x.SelectedWorld);
+        clientService.Connected
+                     .ObserveOn(RxApp.MainThreadScheduler)
+                     .Select(_ => Observable.FromAsync(clientService.Api.GetSelectedWorld))
+                     .Concat()
+                     .Select(b => b.Content!)
+                     .Select(id => Observable.FromAsync(() => clientService.Api.GetWorld(id))
+                                             .Select(b => b.Content!)
+                                             .Select(b => new World(id, b.Name, b.SizeKb)))
+                     .Concat()
+                     .BindTo(this, x => x.SelectedWorld);
 
         this.ObservableForProperty(x => x.SelectedWorld)
             .Select(world => Observable.FromAsync(() => clientService.Api.SelectWorld(world.Value!.Id)))

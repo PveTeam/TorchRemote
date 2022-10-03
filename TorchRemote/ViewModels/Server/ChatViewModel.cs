@@ -15,24 +15,22 @@ public class ChatViewModel : ViewModelBase
 {
     public ChatViewModel(ApiClientService clientService)
     {
-        Observable.FromEventPattern(clientService, nameof(clientService.Connected))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-                Observable.FromAsync(clientService.WatchChatAsync)
-                    .Select(b => b.MessageReceived)
-                    .Concat()
-                    .Select(b => JsonSerializer.Deserialize<ChatResponseBase>(b.Text, options))
-                    .Select(b => b switch
-                    {
-                        ChatMessageResponse msg => $"[{msg.Channel}] {msg.AuthorName}: {msg.Message}",
-                        ChatCommandResponse cmd => $"[Command] {cmd.Author}: {cmd.Message}",
-                        _ => throw new ArgumentOutOfRangeException(nameof(b), b, null)
-                    })
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(s => ChatLines += $"{s}{Environment.NewLine}");
-            });
+        clientService.Connected
+                     .ObserveOn(RxApp.MainThreadScheduler)
+                     .Subscribe(_ =>
+                     {
+                         Observable.FromAsync(clientService.WatchChatAsync)
+                                   .Select(b => b.Messages)
+                                   .Concat()
+                                   .Select(b => b switch
+                                   {
+                                       ChatMessageResponse msg => $"[{msg.Channel}] {msg.AuthorName}: {msg.Message}",
+                                       ChatCommandResponse cmd => $"[Command] {cmd.Author}: {cmd.Message}",
+                                       _ => throw new ArgumentOutOfRangeException(nameof(b), b, null)
+                                   })
+                                   .ObserveOn(RxApp.MainThreadScheduler)
+                                   .Subscribe(s => ChatLines += $"{s}{Environment.NewLine}");
+                     });
         
         SendMessageCommand = ReactiveCommand.CreateFromTask<string>(s => s.StartsWith("!") ?
             clientService.Api.InvokeChatCommand(new(s[(s.IndexOf('!') + 1)..])) :
