@@ -70,8 +70,11 @@ public class SettingManager : Manager
 
             var persistentType = persistentInstance.GetType();
             var getter = persistentType.GetProperty("Data")!;
+
+            var settingType = persistentType.GenericTypeArguments[0];
             
-            RegisterSetting(plugin.Name, getter.GetValue(persistentInstance), persistentType.GenericTypeArguments[0]);
+            RegisterSetting(plugin.Name, getter.GetValue(persistentInstance), settingType);
+            PluginSettings.Add(plugin.Id, settingType.FullName!);
         }
     }
 
@@ -92,6 +95,7 @@ public class SettingManager : Manager
     }
 
     public IDictionary<string, Setting> Settings { get; } = new ConcurrentDictionary<string, Setting>();
+    public IDictionary<Guid, string> PluginSettings { get; } = new ConcurrentDictionary<Guid, string>();
 }
 
 public record Setting(string Name, Type Type, JsonSchema Schema, object Value);

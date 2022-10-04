@@ -3,6 +3,7 @@ using Torch;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.Commands;
+using Torch.Managers;
 using Torch.Server;
 using Torch.Server.Managers;
 using TorchRemote.Plugin.Managers;
@@ -18,6 +19,7 @@ internal static class Statics
     public static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
     public static SettingManager SettingManager => Torch.Managers.GetManager<SettingManager>();
     public static InstanceManager InstanceManager => Torch.Managers.GetManager<InstanceManager>();
+    public static PluginManager PluginManager => Torch.Managers.GetManager<PluginManager>();
     public static CommandManager? CommandManager => Torch.CurrentSession?.Managers.GetManager<CommandManager>();
 
     public static ChatModule ChatModule = null!;

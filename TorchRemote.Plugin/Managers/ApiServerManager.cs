@@ -58,7 +58,9 @@ public class ApiServerManager : Manager
                               .WithController<ServerController>()
                               .WithController<SettingsController>()
                               .WithController<WorldsController>()
-                              .WithController<ChatController>())
+                              .WithController<ChatController>()
+                              .WithController<PluginsController>()
+                              .WithController<PluginDownloadsController>())
                   .WithModule(new LogsModule("/api/live/logs", true))
                   .WithModule(chatModule)
                   .WithBearerToken("/api", new SymmetricSecurityKey(Convert.FromBase64String(_config.SecurityKey)), new BasicAuthorizationServerProvider());
