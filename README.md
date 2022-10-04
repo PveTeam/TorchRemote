@@ -20,7 +20,13 @@
     - [x] get property value
     - [x] set property value
 - [ ] plugins
-    - [ ] list (with ids for config type instance)
+    - [ ] list (status, id for config type instance)
+    - [ ] downloads
+        - [ ] list (guids, names, icons, latest versions)
+        - [ ] get info by guid (full description)
+        - [ ] download by guid
+    - [ ] install (multipart zip)
+    - [ ] uninstall by guid
 - [ ] players
     - [ ] list
     - [ ] kick (with cooldown or not)
