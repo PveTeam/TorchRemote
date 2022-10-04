@@ -21,6 +21,8 @@ internal static class Statics
     public static InstanceManager InstanceManager => Torch.Managers.GetManager<InstanceManager>();
     public static PluginManager PluginManager => Torch.Managers.GetManager<PluginManager>();
     public static CommandManager? CommandManager => Torch.CurrentSession?.Managers.GetManager<CommandManager>();
+    public static MultiplayerManagerDedicated? MultiplayerManager =>
+        Torch.CurrentSession?.Managers.GetManager<MultiplayerManagerDedicated>();
 
     public static ChatModule ChatModule = null!;
 }
