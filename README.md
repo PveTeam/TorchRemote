@@ -19,14 +19,14 @@
     - [x] list properties of type instance
     - [x] get property value
     - [x] set property value
-- [ ] plugins
-    - [ ] list (status, id for config type instance)
-    - [ ] downloads
-        - [ ] list (guids, names, icons, latest versions)
-        - [ ] get info by guid (full description)
-        - [ ] download by guid
-    - [ ] install (multipart zip)
-    - [ ] uninstall by guid
+- [x] plugins
+    - [x] list (status, id for config type instance)
+    - [x] downloads
+        - [x] list (guids, names, icons, latest versions)
+        - [x] get info by guid (full description)
+        - [x] download by guid
+    - [x] install (multipart zip)
+    - [x] uninstall by guid
 - [ ] players
     - [ ] list
     - [ ] kick (with cooldown or not)
@@ -35,8 +35,8 @@
     - [ ] promote
     - [ ] demote
 - [x] logs (websocket)
-- [ ] chat
+- [x] chat
     - [x] live messages (websocket)
     - [x] invoke command
-    - [ ] invoke command (with direct response for optional delay)
+    - [x] invoke command (with direct response for optional delay)
     - [x] send message (custom color author channel)
