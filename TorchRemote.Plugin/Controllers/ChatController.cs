@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using EmbedIO;
 using EmbedIO.Routing;
@@ -83,7 +84,7 @@ public class ChatController : WebApiController, IChatController
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/command")]
-    public async Task<Guid> InvokeCommand([JsonData] ChatCommandRequest request)
+    public async Task InvokeCommand([JsonData] ChatCommandRequest request)
     {
         if (Statics.CommandManager is null)
             throw new HttpException(HttpStatusCode.ServiceUnavailable);
@@ -94,12 +95,27 @@ public class ChatController : WebApiController, IChatController
         var argsList = Regex.Matches(argText, "(\"[^\"]+\"|\\S+)").Cast<Match>().Select(x => x.ToString().Replace("\"", "")).ToList();
 
         var id = Guid.NewGuid();
-        var context = new WebSocketCommandContext(Statics.Torch, command.Plugin, argText, argsList, Statics.ChatModule, id);
         
-        if (await Statics.Torch.InvokeAsync(() => command.TryInvoke(context)))
-            return id;
+        CommandContext context = request.Streamed ? new StreamedCommandContext(Statics.Torch, command.Plugin, argText, argsList, id) :
+            new WebSocketCommandContext(Statics.Torch, command.Plugin, argText, argsList, Statics.ChatModule, id);
+
+        if (!await Statics.Torch.InvokeAsync(() => command.TryInvoke(context)))
+            throw HttpException.BadRequest("Invalid syntax", request.Command);
         
-        throw HttpException.BadRequest("Invalid syntax", request.Command);
+        Response.StatusCode = 200;
+        Response.ContentType = "application/json";
+
+        if (request.Streamed)
+        {
+            await Task.Delay(request.StreamingDuration ?? TimeSpan.FromSeconds(15));
+            await JsonSerializer.SerializeAsync(Response.OutputStream, ((StreamedCommandContext)context).Answers, Statics.SerializerOptions);
+        }
+        else
+        {
+            await JsonSerializer.SerializeAsync(Response.OutputStream, id, Statics.SerializerOptions);
+        }
+        
+        Response.Close();
     }
 }
 
@@ -116,5 +132,24 @@ internal class WebSocketCommandContext : CommandContext
     public override void Respond(string message, string? sender = null, string? font = null)
     {
         _module.SendChatResponse(new ChatCommandResponse(_id, sender ?? Torch.Config.ChatName, message));
+    }
+}
+
+internal class StreamedCommandContext : CommandContext
+{
+    private readonly Guid _id;
+    private readonly List<ChatCommandResponse> _answers = new();
+
+    public IEnumerable<ChatCommandResponse> Answers => _answers;
+
+    public StreamedCommandContext(ITorchBase torch, ITorchPlugin plugin, string rawArgs, List<string> args, Guid id) : base(
+        torch, plugin, Sync.MyId, rawArgs, args)
+    {
+        _id = id;
+    }
+
+    public override void Respond(string message, string? sender = null, string? font = null)
+    {
+        _answers.Add(new ChatCommandResponse(_id, sender ?? Torch.Config.ChatName, message));
     }
 }
