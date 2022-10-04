@@ -27,13 +27,13 @@
         - [x] download by guid
     - [x] install (multipart zip)
     - [x] uninstall by guid
-- [ ] players
-    - [ ] list
-    - [ ] kick (with cooldown or not)
-    - [ ] disconnect
-    - [ ] ban
-    - [ ] promote
-    - [ ] demote
+- [x] players
+    - [x] list
+    - [x] kick (with cooldown or not)
+    - [x] disconnect
+    - [x] ban
+    - [x] promote
+    - [x] demote
 - [x] logs (websocket)
 - [x] chat
     - [x] live messages (websocket)
