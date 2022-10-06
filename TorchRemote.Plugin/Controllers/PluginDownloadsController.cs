@@ -1,4 +1,6 @@
-﻿using EmbedIO;
+﻿using System.Net.Http;
+using System.Text.Json;
+using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 using Torch.API.WebAPI;
@@ -7,27 +9,25 @@ using TorchRemote.Plugin.Utils;
 
 namespace TorchRemote.Plugin.Controllers;
 
+public record PluginsResponse(IReadOnlyList<PluginItemInfo> Plugins);
+
 public class PluginDownloadsController : WebApiController
 {
     private const string RootPath = "/plugins/downloads";
+    private const string BaseAddress = "https://torchapi.com/";
 
     [Route(HttpVerbs.Get, RootPath)]
-    public async Task<IEnumerable<PluginInfo>> GetAsync()
+    public async Task<IEnumerable<PluginItemInfo>> GetAsync()
     {
-        var response = await PluginQuery.Instance.QueryAll();
-        return response.Plugins.Select(b => new PluginItemInfo(Guid.Parse(b.ID), b.Name, b.LatestVersion, b.Author));
-    }
-
-    [Route(HttpVerbs.Get, $"{RootPath}/{{id}}")]
-    public async Task<FullPluginItemInfo> GetFullAsync(Guid id)
-    {
-        var response = await PluginQuery.Instance.QueryOne(id);
+        using var client = new HttpClient()
+        {
+            BaseAddress = new(BaseAddress)
+        };
+        using var stream = await client.GetStreamAsync("api/plugins");
         
-        if (response is null)
-            throw HttpException.NotFound("Plugin not found", id);
+        var response = await JsonSerializer.DeserializeAsync<PluginsResponse>(stream, Statics.SerializerOptions);
 
-        return new(Guid.Parse(response.ID), response.Name, response.Description, response.LatestVersion,
-                   response.Author);
+        return response?.Plugins.Select(b => b with { Icon = BaseAddress + b.Icon }) ?? throw HttpException.InternalServerError("Torch site unavailable");
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/{{id}}/install")]
@@ -42,7 +42,7 @@ public class PluginDownloadsController : WebApiController
             throw HttpException.NotFound("Plugin not found", id);
 
         if (!await PluginQuery.Instance.DownloadPlugin(response))
-            throw HttpException.InternalServerError();
+            throw HttpException.InternalServerError("Torch site unavailable");
         
         Statics.Torch.Config.Plugins.Add(id);
     }
