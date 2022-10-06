@@ -54,6 +54,7 @@ public class ApiServerManager : Manager
                                      .WithUrlPrefix(_config.Listener.UrlPrefix)
                                      .WithMicrosoftHttpListener())
                   .WithLocalSessionManager()
+                  .WithCors("/api", "*", "*", "*")
                   .WithModule(apiModule
                               .WithController<ServerController>()
                               .WithController<SettingsController>()
