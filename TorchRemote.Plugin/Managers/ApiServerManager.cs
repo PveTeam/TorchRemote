@@ -1,18 +1,15 @@
 ﻿using System.Security.Cryptography;
 using System.Text.Json;
 using EmbedIO;
-using EmbedIO.BearerToken;
 using EmbedIO.WebApi;
-using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Torch.API;
-using Torch.API.Managers;
 using Torch.Managers;
 using Torch.Server.Managers;
 using TorchRemote.Plugin.Controllers;
 using TorchRemote.Plugin.Modules;
 using TorchRemote.Plugin.Utils;
-using VRage.Game.ModAPI;
+
 namespace TorchRemote.Plugin.Managers;
 
 public class ApiServerManager : Manager
@@ -52,9 +49,15 @@ public class ApiServerManager : Manager
 
         _server = new WebServer(o => o
                                      .WithUrlPrefix(_config.Listener.UrlPrefix)
-                                     .WithMicrosoftHttpListener())
+                                     .WithMode(_config.Listener.ListenerType switch
+                                     {
+                                         WebListenerType.HttpSys => HttpListenerMode.Microsoft,
+                                         WebListenerType.Internal => HttpListenerMode.EmbedIO,
+                                         _ => throw new ArgumentOutOfRangeException()
+                                     }))
                   .WithLocalSessionManager()
                   .WithCors("/api", "*", "*", "*")
+                  .WithModule(new BearerTokenModule("/api", _config.SecurityKey))
                   .WithModule(apiModule
                               .WithController<ServerController>()
                               .WithController<SettingsController>()
@@ -64,8 +67,7 @@ public class ApiServerManager : Manager
                               .WithController<PluginDownloadsController>()
                               .WithController<PlayersController>())
                   .WithModule(new LogsModule("/api/live/logs", true))
-                  .WithModule(chatModule)
-                  .WithBearerToken("/api", new SymmetricSecurityKey(Convert.FromBase64String(_config.SecurityKey)), new BasicAuthorizationServerProvider());
+                  .WithModule(chatModule);
     }
 
     public override void Attach()

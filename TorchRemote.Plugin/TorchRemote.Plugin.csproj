@@ -20,7 +20,6 @@
 
     <ItemGroup>
         <PackageReference Include="EmbedIO" Version="3.4.3" />
-        <PackageReference Include="EmbedIO.BearerToken" Version="3.4.2" />
         <PackageReference Include="HttpMultipartParser" Version="7.0.0" />
         <PackageReference Include="Json.More.Net" Version="1.7.1" />
         <PackageReference Include="JsonPointer.Net" Version="2.2.2" />
