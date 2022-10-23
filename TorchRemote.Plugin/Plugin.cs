@@ -25,9 +25,8 @@ public class Plugin : TorchPluginBase, IWpfPlugin
             .AddFactory(s => new ChatMonitorManager(s.Torch));
     }
 
-    public UserControl GetControl() => new PropertyGrid
+    public UserControl GetControl() => new ConfigControl(_config)
     {
-        Margin = new(3),
         DataContext = _config.Data
     };
 }
