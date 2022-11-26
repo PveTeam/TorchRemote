@@ -40,3 +40,11 @@
     - [x] invoke command
     - [x] invoke command (with direct response for optional delay)
     - [x] send message (custom color author channel)
+- [ ] grids
+    - [ ] get all (grouped by physical factor)
+    - [ ] get by entity id (basic info + counts of each terminal block subtype)
+    - [ ] toggle power state by entity id
+    - [ ] delete by entity id
+    - [ ] delete the entire group by entity id of one grid
+    - [ ] get block list
+        - [ ] filtering: all, terminal, functional (is enabled, is working), type, subtype
