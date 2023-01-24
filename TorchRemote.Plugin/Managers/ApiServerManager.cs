@@ -65,7 +65,8 @@ public class ApiServerManager : Manager
                               .WithController<ChatController>()
                               .WithController<PluginsController>()
                               .WithController<PluginDownloadsController>()
-                              .WithController<PlayersController>())
+                              .WithController<PlayersController>()
+                              .WithController<GridsController>())
                   .WithModule(new LogsModule("/api/live/logs", true))
                   .WithModule(chatModule);
     }
