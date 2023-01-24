@@ -35,7 +35,7 @@ public class ServerController : WebApiController, IServerController
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/stop")]
-    public async Task Stop([JsonData] StopServerRequest request)
+    public async Task Stop([JsonBody] StopServerRequest request)
     {
         if (!Statics.Torch.IsRunning)
             throw HttpException.BadRequest($"Server can't stop in state {Statics.Torch.State}", Statics.Torch.State);
@@ -60,7 +60,7 @@ public class ServerController : WebApiController, IServerController
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/settings")]
-    public async Task SetSettings([JsonData] ServerSettings request)
+    public async Task SetSettings([JsonBody] ServerSettings request)
     {
         var settings = Statics.Torch.DedicatedInstance.DedicatedConfig;
 

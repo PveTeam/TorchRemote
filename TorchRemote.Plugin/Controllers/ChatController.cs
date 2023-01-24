@@ -34,7 +34,7 @@ public class ChatController : WebApiController, IChatController
     private static readonly MethodInfo SingleTargetMethod = null!;
     
     [Route(HttpVerbs.Post, $"{RootPath}/message")]
-    public void SendMessage([JsonData] ChatMessageRequest request)
+    public void SendMessage([JsonBody] ChatMessageRequest request)
     {
         if (MyMultiplayer.Static is null)
             throw new HttpException(HttpStatusCode.ServiceUnavailable);
@@ -84,7 +84,7 @@ public class ChatController : WebApiController, IChatController
     }
 
     [Route(HttpVerbs.Post, $"{RootPath}/command")]
-    public async Task InvokeCommand([JsonData] ChatCommandRequest request)
+    public async Task InvokeCommand([JsonBody] ChatCommandRequest request)
     {
         if (Statics.CommandManager is null)
             throw new HttpException(HttpStatusCode.ServiceUnavailable);

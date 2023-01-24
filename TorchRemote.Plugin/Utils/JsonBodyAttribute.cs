@@ -16,7 +16,7 @@ namespace TorchRemote.Plugin.Utils;
 /// <seealso cref="Attribute" />
 /// <seealso cref="IRequestDataAttribute{TController}" />
 [AttributeUsage(AttributeTargets.Parameter)]
-public class JsonDataAttribute : Attribute, IRequestDataAttribute<WebApiController>
+public class JsonBodyAttribute : Attribute, IRequestDataAttribute<WebApiController>
 {
     /// <inheritdoc />
     public async Task<object?> GetRequestDataAsync(WebApiController controller, Type type, string parameterName)

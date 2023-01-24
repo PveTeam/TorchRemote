@@ -33,7 +33,7 @@ public class SettingsController : WebApiController, ISettingsController
     }
 
     [Route(HttpVerbs.Get, $"{RootPath}/{{fullName}}/values")]
-    public IEnumerable<PropertyBase> GetValues(string fullName, [JsonData] IEnumerable<string> propertyNames)
+    public IEnumerable<PropertyBase> GetValues(string fullName, [JsonBody] IEnumerable<string> propertyNames)
     {
         if (!Statics.SettingManager.Settings.TryGetValue(fullName, out var setting))
             throw HttpException.NotFound($"Setting with fullName {fullName} not found", fullName);
@@ -76,7 +76,7 @@ public class SettingsController : WebApiController, ISettingsController
     }
 
     [Route(HttpVerbs.Patch, $"{RootPath}/{{fullName}}/values")]
-    public int Patch(string fullName, [JsonData] IEnumerable<PropertyBase> properties)
+    public int Patch(string fullName, [JsonBody] IEnumerable<PropertyBase> properties)
     {
         if (!Statics.SettingManager.Settings.TryGetValue(fullName, out var setting))
             throw HttpException.NotFound($"Setting with fullName {fullName} not found", fullName);
