@@ -1,6 +1,7 @@
 ﻿using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
+using Sandbox;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Multiplayer;
 using TorchRemote.Models.Responses;
@@ -31,6 +32,18 @@ public class PlayersController : WebApiController
     public void Ban(ulong id)
     {
         Statics.MultiplayerManager!.BanPlayer(id);
+    }
+    
+    [Route(HttpVerbs.Post, $"{RootPath}/{{id}}/unban")]
+    public void UnBan(ulong id)
+    {
+        Statics.MultiplayerManager!.BanPlayer(id, false);
+    }
+
+    [Route(HttpVerbs.Get, $"{RootPath}/{{id}}/banned")]
+    public IEnumerable<ulong> Banned()
+    {
+        return MySandboxGame.ConfigDedicated.Banned;
     }
     
     [Route(HttpVerbs.Post, $"{RootPath}/{{id}}/disconnect")]
