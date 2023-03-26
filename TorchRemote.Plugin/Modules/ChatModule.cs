@@ -17,9 +17,7 @@ public class ChatModule : WebSocketModule
             return;
 
         var buffer = JsonSerializer.SerializeToUtf8Bytes(response, Statics.SerializerOptions);
-        await Task.WhenAll(ActiveContexts
-            .Where(b => b.WebSocket.State is WebSocketState.Open)
-            .Select(context => context.WebSocket.SendAsync(buffer, true)));
+        await BroadcastAsync(buffer);
     }
     
     protected override async Task OnMessageReceivedAsync(IWebSocketContext context, byte[] buffer, IWebSocketReceiveResult result)

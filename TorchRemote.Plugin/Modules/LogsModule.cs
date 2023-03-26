@@ -29,9 +29,7 @@ public class LogsModule : WebSocketModule
         var response = new LogLineResponse(time, (LogLineLevel)level.Ordinal, logger, message);
         var buffer = JsonSerializer.SerializeToUtf8Bytes(response, Statics.SerializerOptions);
 
-        await Task.WhenAll(ActiveContexts
-            .Where(b => b.WebSocket.State is WebSocketState.Open)
-            .Select(context => context.WebSocket.SendAsync(buffer, true)));
+        await BroadcastAsync(buffer);
     }
 
     private void ConfigureLogging()
