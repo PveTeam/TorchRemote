@@ -40,7 +40,7 @@ public class PlayersController : WebApiController
         Statics.MultiplayerManager!.BanPlayer(id, false);
     }
 
-    [Route(HttpVerbs.Get, $"{RootPath}/{{id}}/banned")]
+    [Route(HttpVerbs.Get, $"{RootPath}/banned")]
     public IEnumerable<ulong> Banned()
     {
         return MySandboxGame.ConfigDedicated.Banned;
