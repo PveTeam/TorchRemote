@@ -61,6 +61,6 @@ public class PluginsController : WebApiController
             file.Data.CopyTo(zipStream);
             
             return new PluginInfo(manifest.Guid, manifest.Name, manifest.Version);
-        });
+        }).ToArray();
     }
 }

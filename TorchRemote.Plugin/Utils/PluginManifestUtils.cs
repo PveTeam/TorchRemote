@@ -16,7 +16,7 @@ public static class PluginManifestUtils
 
     public static PluginManifest ReadFromZip(Stream stream)
     {
-        using var archive = new ZipArchive(stream);
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Read, true);
         using var entryStream = archive.GetEntry("manifest.xml")!.Open();
         return Read(entryStream);
     }
